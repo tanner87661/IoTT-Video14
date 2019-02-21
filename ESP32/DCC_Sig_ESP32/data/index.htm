@@ -1,0 +1,263 @@
+<html>
+	
+<head>
+<!--<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<!--- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
+<script type="text/javascript" src="ctcmain.js"></script>
+<script type="text/javascript" src="ledcfg.js"></script>
+<script type="text/javascript" src="nodecfg.js"></script>
+<script type="text/javascript" src="ctcsig.js"></script>
+
+ <link rel = "stylesheet"
+   type = "text/css"
+   href = "ctcpanel.css" />
+   
+</head>
+
+<body>
+<button class="tablink" onclick="openPage('BasicCfg', this, 'grey')" id="defaultOpen" >Device Setup</button>
+<button class="tablink" onclick="openPage('LEDCfg', this, 'grey')" >LED Setup</button>
+<button class="tablink" onclick="openPage('SignalCfg', this, 'grey')">Signals</button>
+
+<div id="BasicCfg" class="tabcontent">
+    <div id="BasicCfg_Title" class="pagetitlebox">
+		<h1>Signal System Device Setup</h1>
+	</div>
+	
+	
+    <div id="nodeconfigdiv" class="pagetopicboxscroll-y">
+    <div id="BasicCfg_Data1" class="pagetopicbox">
+		<text class="inputtext_tab1">Firmware Version</text>
+		<text class="inputtext_tab2" Id="myversion">n/a</text>
+		<text class="inputtext_tab3">System Uptime:</text>
+		<text Id="sysuptime">n/a</text>
+	</div>
+    <div id="BasicCfg_Data2" class="pagetopicbox">
+		<text class="inputtext_tab1">IP Address</text>
+		<text class="inputtext_tab2" Id="myip">n/a</text>
+		<text class="inputtext_tab3">Signal Strength:</text>
+		<text Id="sigstrength">n/a</text>
+	</div>
+    <div class="pagelinebox">&nbsp;</div>
+    <div id="BasicCfg_UseWifiCB" class="pagetopicbox">
+		<input type="checkbox" id="cbUseWifi" onclick="setWifiOptions()" class="checkbox">
+		<span class="checkboxtext">Connect to Wifi Network</span>
+	</div>
+    <div id="BasicCfg_UseWifiData" class="pagetopicbox">
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Net BIOS Name:</text></div>
+			<div class="inputtext_tab2"><input Id="newnetbiosname" type="text" /></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>IP Address Type:</text></div>
+			<div class="inputtext_tab2">
+				<input type="radio" name="IPSrc" id="rbUseDHCP" onclick="setDHCPOptions()" class="radiobutton">
+				<span class="checkboxtext">DHCP</span>
+				<input type="radio" name="IPSrc" id="rbUseStatic" onclick="setDHCPOptions()" class="radiobutton">
+				<span class="checkboxtext">Static</span>
+			</div>
+		</div>
+		<div id="BasicCfg_DHCPOptions" class="divfullcolumn">
+			<div class="divfullcolumn">
+				<div class="inputtext_tab1"><text>IP Address:</text></div>
+				<div class="inputtext_tab2"><input Id="newstaticip" type="text" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"/></div>
+				<div class="inputtext_tab3"><text>Gateway IP:</text></div>
+				<div class="inputtext_tab4"><input Id="newstaticgateway" type="text" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"/></div>
+			</div>
+			<div class="divfullcolumn">
+				<div class="inputtext_tab1"><text>Net Mask:</text></div>
+				<div class="inputtext_tab2"><input Id="newnetmask" type="text" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"/></div>
+				<div class="inputtext_tab3"><text>DNS IP:</text></div>
+				<div class="inputtext_tab4"><input Id="newdnsip" type="text" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"/></div>
+			</div>
+		</div>
+	</div>
+    <div id="BasicCfg_UseAPCB" class="pagetopicbox">
+		<input type="checkbox" id="cbUseAP" onclick="setAccessPointOptions()" class="checkbox">
+		<span class="checkboxtext">Provide Wifi Access Point</span>
+	</div>
+    <div id="BasicCfg_UseAPData" class="pagetopicbox">
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Access Point Name:</text></div>
+			<div class="inputtext_tab2"><input Id="newapname" type="text" /></div>
+			<div class="inputtext_tab3"><text>Password:</text></div>
+			<div class="inputtext_tab4"><input Id="newappassword" type="text" /></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Gateway IP:</text></div>
+			<div class="inputtext_tab2"><input Id="newapip" type="text" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"/></div>
+		</div>
+	</div>
+    <div id="BasicCfg_UseNTPCB" class="pagetopicbox">
+		<input type="checkbox" id="cbUseNTP" onclick="setTimeServerOptions()" class="checkbox">
+		<span class="checkboxtext">Connect to Internet Time Server</span>
+	</div>
+    <div id="BasicCfg_UseNTPData" class="pagetopicbox">
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Time Server:</text></div>
+			<div class="inputtext_tab2"><input Id="newntpserver" type="text" /></div>
+			<div class="inputtext_tab3"><text>Time Zone:</text></div>
+			<div class="inputtext_tab4"><input Id="newtimezone" type="text" /></div>
+		</div>
+
+	</div>
+    <div id="BasicCfg_CommandSource" class="pagetopicbox">
+		<div class="topictext_float"><text>Listen to messages from:</text></div>
+		<div class="inputtext_tablong">
+			<div id="radioDCC">
+				<input type="radio" name="cmdSrc" id="rbUseDCC" onclick="setGatewayOptions()" class="radiobutton">
+				<span class="checkboxtext">DCC</span>
+			</div>
+			<div id="radioLocoNet">
+				<input type="radio" name="cmdSrc" id="rbUseLocoNet" onclick="setGatewayOptions()" class="radiobutton">
+				<span class="checkboxtext">LocoNet</span>
+			</div>
+			<div id="radioMQTT">
+				<input type="radio" name="cmdSrc" id="rbUseMQTT" onclick="setGatewayOptions()" class="radiobutton">
+				<span class="checkboxtext">MQTT</span>
+			</div>
+		</div>
+		<div class="inputtext_tab3" id = "checkboxBushby">
+			<input type="checkbox" id="supportbushby" onclick="setGatewayOptions()" class="checkbox">
+			<span class="checkboxtext">Support Bushby Bit</span>
+		</div>
+	</div>
+    <div id="BasicCfg_MQTTSetup" class="pagetopicbox">
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text >MQTT Server:</text></div>
+			<div class="inputtext_tab2"><input Id="newmqttserver" type="text" /></div>
+			<div class="inputtext_tab3"><text>Port:</text></div>
+			<div class="inputtext_tab4"><input Id="newmqttport" type="text" /></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>User Name:</text></div>
+			<div class="inputtext_tab2"><input Id="newmqttuser" type="text" /></div>
+			<div class="inputtext_tab3"><text>Password:</text></div>
+			<div class="inputtext_tab4"><input Id="newmqttpassword" type="text" /></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Broadcast Topic:</text></div>
+			<div class="inputtext_tab2"><input Id="newbroadcasttopic" type="text" /></div>
+			<div class="inputtext_tab3"><text>Echo Topic:</text></div>
+			<div class="inputtext_tab4"><input Id="newechotopic" type="text" /></div>
+		</div>
+	</div>
+	</div>
+    <div class="pagelinebox">&nbsp;</div>
+    <div id="BasicCfg_ModalButtons" class="pagetopicbox">
+		<button id="btn_Cancel" onclick="cancelCfg()"class="mod-button">Cancel</button>
+		<button id="btn_Save" onclick="saveDeviceCfg()" class="mod-button">Save & Restart</button>
+	</div>
+    <div class="pagetopicbox">&nbsp;
+		<p><img src="iottlogo.jpg" alt="IoTT Internet of Toy Trains"><font size="3">&nbsp; &copy; 2019 Hans Tanner</font></p>
+	</div>	
+</div>
+
+<div id="LEDCfg" class="tabcontent">
+    <div id="BasicCfg_Title" class="pagetitlebox">
+		<h1>LED Setup</h1>
+	</div>
+    <div id="ledconfigdiv" class="pagetopicboxscroll-y">
+		<div class="divfullcolumn">
+			<div class="pagetopicbox"><text>LED Chain Setup:</text></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text># of LEDs in Chain:</text></div>
+			<div class="inputtext_float" Id="numledsinchain"></div>
+			<div class="inputtext_space">&nbsp;</div>
+			<input type="checkbox" id="cbRunTest" onclick="testLEDChain(this)" class="checkbox">
+			<span class="checkboxtext">Run Test Program</span>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Brightness:</text></div>
+			<div class="slidecontainer inputtext_float">
+				<input type="range" min="1" max="100" value="50" class="slider" id="mybrightness" oninput="handleBrightness(this, value)">
+			</div>
+			<div class="inputtext_space">&nbsp;</div>
+			<div class="inputtext_float" Id="globalbrightness"></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Fading Delay:</text></div>
+			<div class="slidecontainer inputtext_float">
+				<input type="range" min="1" max="100" value="50" class="slider" id="myfading" oninput="handleFading(this, value)">
+			</div>
+			<div class="inputtext_space">&nbsp;</div>
+			<div class="inputtext_float" Id="globalfading"></div>
+		</div>
+
+		<div class="divfullcolumn">
+			<div class="pagetopicbox"><text>Named LED Colors:</text></div>
+		</div>
+		<div class="divfullcolumn">
+			<div class="inputtext_tab1"><text>Add/Edit Colors:</text></div>
+			<div class="inputtext_tab2">
+				<input Id="inp_coloredit" class="numinputstandard"  type="text" />
+				<select class="colorlist" onchange="loadColor()" size="6" id="namedcolorlist" name="lstValue" >
+				</select>
+			</div>
+			<div class="inputtext_tab3">
+				<div class="divembedded">
+					<button id="btn_Save" onclick="addNewColor()" class="slim-button">Add</button>
+					<button id="btn_Change" onclick="changeColor()" class="slim-button">Change</button>
+				</div>
+				<div class="divembedded">
+					<button id="btn_Delete" onclick="deleteColor()" class="slim-button">Delete</button>
+				</div>
+				<div class="divembedded">
+					<input class="colordialog" id="dlgColor" type="color" name="favcolor" value="#000000"></input>
+					<button id="btn_Test" onclick="testLEDChainColor(this)" onmousedown = "testLEDChainMouse(this)" class="slim-button">Test</button>
+				</div>
+				<div class="divembedded">&nbsp;</div>
+				<div class="divembedded">
+					<button id="btn_Save" onclick="saveColor()" class="slim-button">Save</button>
+				</div>
+			</div>
+		</div>
+
+    </div>
+    <div class="pagelinebox">&nbsp;</div>
+    <div id="BasicCfg_ModalButtons" class="pagetopicbox">
+		<button id="btn_Cancel" onclick="cancelCfg()"class="mod-button">Cancel</button>
+		<button id="btn_Save" onclick="saveSigCfg()" class="mod-button">Save & Restart</button>
+		<input type="checkbox" id="useemulator0" onclick="setEmulatorMode(this)" class="checkbox">
+		<span class="checkboxtext">Activate Test Mode</span>
+	</div>
+    <div class="pagetopicbox">&nbsp;
+		<p><img src="iottlogo.jpg" alt="IoTT Internet of Toy Trains"><font size="3">&nbsp; &copy; 2019 Hans Tanner</font></p>
+	</div>	
+</div>
+
+
+<div id="SignalCfg" class="tabcontent">
+    <div id="BasicCfg_Title" class="pagetitlebox">
+		<h1>Signal Configuration</h1>
+	</div>
+    <div id="sigtablediv" class="pagetopicboxscroll-y">
+		
+	</div>
+    <div class="pagelinebox">&nbsp;</div>
+    <div id="BasicCfg_Signals" class="pagetopicbox">
+		<button id="btn_SigCancel" onclick="cancelSigCfg()"class="mod-button">Cancel</button>
+		<button id="btn_SigSave" onclick="saveSigCfg()" class="mod-button">Save</button>
+		<input type="checkbox" id="useemulator4" onclick="setEmulatorMode(this)" class="checkbox">
+		<span class="checkboxtext">Activate Test Mode</span>
+		<span class="checkboxtext">&nbsp;</span>
+		<button id="btn_CreateSig" onclick="createAddSignal()" class="mod-button">Create Signal</button>
+	</div>
+    <div class="pagetopicbox">&nbsp;
+		<p><img src="iottlogo.jpg" alt="IoTT Internet of Toy Trains"><font size="3">&nbsp; &copy; 2019 Hans Tanner</font></p>
+	</div>	
+</div>
+
+<script>
+	createSignalTable();
+	setTimeout(function(){ document.getElementById("defaultOpen").click() }, 500);
+	setTimeout(function(){ setInterval(UpdateTimeDisplay, 1000) }, 1000);
+	getConfigData();
+	getSignalData();
+	startWebsockets();
+</script>
+
+</body>
+
+</html>
